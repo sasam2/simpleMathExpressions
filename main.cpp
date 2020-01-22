@@ -30,10 +30,11 @@ class op: public operation {
   }
 
   void print(ostream& stream) {
+    stream << '('; 
     this->left->print(stream);
     stream << ' ' << this->sign << ' ';
     this->right->print(stream);
-    stream << endl;
+    stream << ')';
   }
 };
 
