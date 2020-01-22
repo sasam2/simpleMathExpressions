@@ -51,6 +51,7 @@ void buildExpression(string expression){
     op *prevOp=NULL;
     op *currOp=NULL;
     op *firstOp=NULL;
+    stack<operation> ops;
     for(int i=0; i<expression.size(); ){
         
         int a = expression[i++]-'0';
@@ -60,17 +61,35 @@ void buildExpression(string expression){
             cout << a << ')' << endl;
             break;
         }
-        
+
         char sign = expression[i++];
-        currOp = new op();
-        currOp->left = new nr(a);
-        currOp->sign = sign;
-        cout << "(" << a << sign;
-        if(prevOp!=NULL){
-              prevOp->right=currOp;     
+        if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/')){
+            
+            //prevOp = (... * a)            
+            prevOp->right = new nr(a);
+            
+            //currOp = ()
+            currOp = new op();
+            currOp->left = prevOp;
+            currOp->sign = sign;
+            
+            prevOp=currOp;
+            //firstOp=currOp;
+            cout << a << sign << ' ';
         } else {
-              firstOp=currOp;        
+
+            currOp = new op();
+            currOp->left = new nr(a);
+            currOp->sign = sign;
+            cout << "(" << a << sign;
+            if(prevOp!=NULL){
+                  prevOp->right=currOp;     
+            }
         }
+        if(prevOp==NULL){
+              firstOp=currOp;        
+        }        
+        
         prevOp=currOp;
 
     }
@@ -93,7 +112,7 @@ int main(int argc, char* argv[]) {
     operation *o = new nr(8);
     o->print(cout);
     cout<<endl;
-    buildExpression("9+1+3+4+5");
+    buildExpression("9+1*3+4+5");
    
    return 0;
 }
