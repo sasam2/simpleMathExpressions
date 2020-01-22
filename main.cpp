@@ -8,6 +8,7 @@ class operation {
     public:
     operation(){}
     virtual void print(ostream& stream)=0;
+    virtual int exec()=0;
 } ;
 class nr: public operation {
   public:
@@ -15,6 +16,9 @@ class nr: public operation {
   nr(int n){this->n=n;}
   void print(ostream& stream) {
     stream << ' ' << this->n << ' ';
+  }
+  int exec(){
+    return n;
   }
 } ;
 class op: public operation {
@@ -36,14 +40,26 @@ class op: public operation {
     this->right->print(stream);
     stream << ')';
   }
+
+  int exec(){
+    switch(this->sign){
+        case '+':
+            return this->left->exec()+this->right->exec();
+            
+        case '-':
+            return this->left->exec()-this->right->exec();
+            
+        case '*':
+            return this->left->exec()*this->right->exec();
+            
+        case '/':
+            return this->left->exec()/this->right->exec();
+            
+        default:
+            return 0;
+    }
+  }
 };
-
-
-operation *newExpression(int a, char sign){
-
-
-}
-
 
 void buildExpression(string expression){
     
@@ -108,6 +124,7 @@ void buildExpression(string expression){
 
     }
     firstOp->print(cout);
+    cout << firstOp->exec() <<endl;
 }
 
 
@@ -126,7 +143,7 @@ int main(int argc, char* argv[]) {
     operation *o = new nr(8);
     o->print(cout);
     cout<<endl;
-    buildExpression("9+1*3*2+5*2");
+    buildExpression("9+1*3/2+5*2");
    
    return 0;
 }
