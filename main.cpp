@@ -63,18 +63,32 @@ void buildExpression(string expression){
         }
 
         char sign = expression[i++];
-        if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/')){
-            
-            //prevOp = (... * a)            
-            prevOp->right = new nr(a);
-            
-            //currOp = ()
-            currOp = new op();
-            currOp->left = firstOp;
-            currOp->sign = sign;
-            
-            prevOp=currOp;
-            firstOp=currOp;
+        if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/') && (sign == '-' || sign == '+')){
+                        
+            //if(sign == '-' || sign == '+'){
+                
+                //criar nr p/fechar          
+                prevOp->right = new nr(a);
+    
+                //criar firstOp que engloba td em left
+                currOp = new op();
+                currOp->left = firstOp;
+                currOp->sign = sign;
+                
+                prevOp=currOp;
+                firstOp=currOp;
+                                
+            /*} else {
+                
+                //cr
+                currOp = new op();
+                currOp->right = new nr(a);
+                currOp->sign = sign;
+                prevOp->right = currOp;
+
+                prevOp=currOp;
+            }*/
+
             cout << a << sign << ' ';
         } else {
 
@@ -112,7 +126,7 @@ int main(int argc, char* argv[]) {
     operation *o = new nr(8);
     o->print(cout);
     cout<<endl;
-    buildExpression("9+1*3+4+3*5+1");
+    buildExpression("9+1*3*2+5*2");
    
    return 0;
 }
