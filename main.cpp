@@ -70,11 +70,11 @@ void buildExpression(string expression){
             
             //currOp = ()
             currOp = new op();
-            currOp->left = prevOp;
+            currOp->left = firstOp;
             currOp->sign = sign;
             
             prevOp=currOp;
-            //firstOp=currOp;
+            firstOp=currOp;
             cout << a << sign << ' ';
         } else {
 
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
     operation *o = new nr(8);
     o->print(cout);
     cout<<endl;
-    buildExpression("9+1*3+4+5");
+    buildExpression("9+1*3+4+3*5+1");
    
    return 0;
 }
