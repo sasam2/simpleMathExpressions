@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stack>
 #include <stdio.h>  
+#include <algorithm>
 using namespace std;
 
 
@@ -8,7 +9,7 @@ class operation {
     public:
     operation(){}
     virtual void print(ostream& stream)=0;
-    virtual int exec()=0;
+    virtual float exec()=0;
 } ;
 class nr: public operation {
   public:
@@ -17,7 +18,7 @@ class nr: public operation {
   void print(ostream& stream) {
     stream << ' ' << this->n << ' ';
   }
-  int exec(){
+  float exec(){
     return n;
   }
 } ;
@@ -41,7 +42,7 @@ class op: public operation {
     stream << ')';
   }
 
-  int exec(){
+  float exec(){
     switch(this->sign){
         case '+':
             return this->left->exec()+this->right->exec();
@@ -61,7 +62,31 @@ class op: public operation {
   }
 };
 
-void buildExpression(string expression){
+string getOperation(string expression){
+    for(int i=0; i<expression.size(); ){
+
+        char a=0;        
+        do{
+            a = expression[i++];
+        }while(a!=')');
+
+        cout<<"i="<<i<<endl;
+        int j=i;
+        
+        do{
+            a = expression[j--];
+        }while(a!='(');
+
+        cout<<"j="<<j<<endl;
+        string expr=expression.substr(j+2,i-2);
+        return expr;
+        
+        
+    }
+}
+
+
+operation *buildExpression(string expression){
     
     //stack<operation> ops;
     op *prevOp=NULL;
@@ -74,7 +99,7 @@ void buildExpression(string expression){
 
         if(i==expression.size()){ //end
             prevOp->right = new nr(a);
-            cout << a << ')' << endl;
+            //cout << a << ')' << endl;
             break;
         }
 
@@ -105,13 +130,13 @@ void buildExpression(string expression){
                 prevOp=currOp;
             }*/
 
-            cout << a << sign << ' ';
+            //cout << a << sign << ' ';
         } else {
 
             currOp = new op();
             currOp->left = new nr(a);
             currOp->sign = sign;
-            cout << "(" << a << sign;
+            //cout << "(" << a << sign;
             if(prevOp!=NULL){
                   prevOp->right=currOp;     
             }
@@ -123,27 +148,46 @@ void buildExpression(string expression){
         prevOp=currOp;
 
     }
-    firstOp->print(cout);
-    cout << firstOp->exec() <<endl;
+    return firstOp;
 }
 
+string removeSpaces(string str){
+    string ret="";
+    for(int i=0; i< str.size();i++){
+        char c = str[i];
+        if(!isspace(c))
+            ret+=c;    
+    }
+    return ret;
+}
 
+void test(string str){
+
+    cout<<"original expression: "<<str<<endl;    
+    string strNoSpc=removeSpaces(str);
+
+    cout<<"expression without spaces: "<<strNoSpc<<endl;
+    operation *firstOp = buildExpression(strNoSpc);
+
+    cout<<"expression with precedence: ";    
+    firstOp->print(cout);
+    cout << endl;
+
+    cout<<"expression result: " << firstOp->exec() <<endl;
+    cout<<endl;
+}
 
 int main(int argc, char* argv[]) {
-   
-   /*
-    if(argc!=2){
-        cerr << "No 2nd argument!"<<endl;
-        return 1;
-   }
-   char *expression = argv[1];
-    */
+
    
     cout << "Hello, world!" << endl;
     operation *o = new nr(8);
     o->print(cout);
     cout<<endl;
-    buildExpression("9+1*3/2+5*2");
+
+    test("4 * 3 / 2 + 5 * 2");
+
+    cout << getOperation("(8+9*1)") <<endl;
    
    return 0;
 }
