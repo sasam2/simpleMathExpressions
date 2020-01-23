@@ -10,6 +10,7 @@ class operation {
     operation(){}
     virtual void print(ostream& stream)=0;
     virtual float exec()=0;
+    virtual ~operation(){}; 
 } ;
 class nr: public operation {
   public:
@@ -21,6 +22,7 @@ class nr: public operation {
   float exec(){
     return n;
   }
+  ~nr(){cout<<"delete nr "<<n<<endl;}
 } ;
 class op: public operation {
   public:
@@ -60,6 +62,11 @@ class op: public operation {
             return 0;
     }
   }
+  ~op(){
+    cout<<"delete op "<<sign<<endl;
+    delete left;
+    delete right;  
+  }
 };
 
 string getOperation(string expression){
@@ -86,16 +93,21 @@ string getOperation(string expression){
 }
 
 
+
 operation *buildExpression(string expression){
     
-    //stack<operation> ops;
+    if(expression.size()==1 && '0' <= expression[0] && expression[0] <= '9')
+        return new nr(expression[0]-'0');
+    
+        
     op *prevOp=NULL;
     op *currOp=NULL;
     op *firstOp=NULL;
-    stack<operation> ops;
     for(int i=0; i<expression.size(); ){
         
         int a = expression[i++]-'0';
+        if(a < 0  || a > 9)
+            cerr<<"Error: found non digit"<<endl;
 
         if(i==expression.size()){ //end
             prevOp->right = new nr(a);
@@ -106,8 +118,6 @@ operation *buildExpression(string expression){
         char sign = expression[i++];
         if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/') && (sign == '-' || sign == '+')){
                         
-            //if(sign == '-' || sign == '+'){
-                
                 //criar nr p/fechar          
                 prevOp->right = new nr(a);
     
@@ -118,29 +128,23 @@ operation *buildExpression(string expression){
                 
                 prevOp=currOp;
                 firstOp=currOp;
-                                
-            /*} else {
-                
-                //cr
-                currOp = new op();
-                currOp->right = new nr(a);
-                currOp->sign = sign;
-                prevOp->right = currOp;
-
-                prevOp=currOp;
-            }*/
 
             //cout << a << sign << ' ';
         } else {
 
-            currOp = new op();
-            currOp->left = new nr(a);
-            currOp->sign = sign;
-            //cout << "(" << a << sign;
-            if(prevOp!=NULL){
-                  prevOp->right=currOp;     
+            if(sign == '-' || sign == '+' || sign == '/' || sign == '*'){
+                currOp = new op();
+                currOp->left = new nr(a);
+                currOp->sign = sign;
+                //cout << "(" << a << sign;
+                if(prevOp!=NULL){
+                      prevOp->right=currOp;     
+                }
+            } else {
+                cerr << "Error: unknown sign" <<endl;            
             }
         }
+        //primeira iteracao
         if(prevOp==NULL){
               firstOp=currOp;        
         }        
@@ -175,6 +179,9 @@ void test(string str){
 
     cout<<"expression result: " << firstOp->exec() <<endl;
     cout<<endl;
+
+    cout<<"delete"<<endl;
+    delete firstOp;
 }
 
 int main(int argc, char* argv[]) {
@@ -185,7 +192,9 @@ int main(int argc, char* argv[]) {
     o->print(cout);
     cout<<endl;
 
+    test("4");
     test("4 * 3 / 2 + 5 * 2");
+    test("4 . 3 / 2 + 5 * 2");
 
     cout << getOperation("(8+9*1)") <<endl;
    
