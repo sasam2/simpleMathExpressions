@@ -69,31 +69,6 @@ class op: public operation {
   }
 };
 
-string getOperation(string expression){
-    for(int i=0; i<expression.size(); ){
-
-        char a=0;        
-        do{
-            a = expression[i++];
-        }while(a!=')');
-
-        cout<<"i="<<i<<endl;
-        int j=i;
-        
-        do{
-            a = expression[j--];
-        }while(a!='(');
-
-        cout<<"j="<<j<<endl;
-        string expr=expression.substr(j+2,i-2);
-        return expr;
-        
-        
-    }
-}
-
-
-
 operation *buildExpression(string expression){
     
     if(expression.size()==1 && '0' <= expression[0] && expression[0] <= '9')
@@ -113,18 +88,18 @@ operation *buildExpression(string expression){
             return NULL;
         }
 
-        if(i==expression.size()){ //end
-            prevOp->right = new nr(a);
-            //cout << a << ')' << endl;
-            break;
-        }
-
         char sign = expression[i++];
         if(sign != '-' && sign != '+' && sign != '/' && sign != '*'){
             cerr << "Error: unknown sign" <<endl;
             if(firstOp!=NULL)
                 delete firstOp;
             return NULL; 
+        }
+
+        if(i==expression.size()){ //end
+            prevOp->right = new nr(a);
+            //cout << a << ')' << endl;
+            break;
         }
 
         if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/') && (sign == '-' || sign == '+')){
@@ -208,7 +183,6 @@ int main(int argc, char* argv[]) {
     test("4 . 3 / 2 + 5 * 2");
     test("a . 3 / 2 + 5 * 2");
 
-    cout << getOperation("(8+9*1)") <<endl;
    
    return 0;
 }
