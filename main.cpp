@@ -82,24 +82,24 @@ operation *buildExpression(string expression){
         
         int a = expression[i++]-'0';
         if(a < 0  || a > 9){
-            cerr<<"Error: found non digit"<<endl;
+            cerr<<"Error: found non digit "<< a <<endl;
             if(firstOp!=NULL)
                 delete firstOp;
             return NULL;
-        }
-
-        char sign = expression[i++];
-        if(sign != '-' && sign != '+' && sign != '/' && sign != '*'){
-            cerr << "Error: unknown sign" <<endl;
-            if(firstOp!=NULL)
-                delete firstOp;
-            return NULL; 
         }
 
         if(i==expression.size()){ //end
             prevOp->right = new nr(a);
             //cout << a << ')' << endl;
             break;
+        }
+        
+        char sign = expression[i++];
+        if(sign != '-' && sign != '+' && sign != '/' && sign != '*'){
+            cerr << "Error: unknown sign " << sign <<endl;
+            if(firstOp!=NULL)
+                delete firstOp;
+            return NULL; 
         }
 
         if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/') && (sign == '-' || sign == '+')){
@@ -178,6 +178,7 @@ int main(int argc, char* argv[]) {
     cout<<endl;
 
     test("4");
+    test("4 * 3 / 2 + 6+1*5 * 2");
     test("4 * 3 / 2 + 5 * 2");
     test("4 + 3 / 2 + 5 * 2 *9");
     test("4 . 3 / 2 + 5 * 2");
