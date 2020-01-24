@@ -88,7 +88,7 @@ operation *buildExpression(string expression){
             return NULL;
         }
 
-        if(i==expression.size()){ //end
+        if(i==expression.size()){ //expression ended
             prevOp->right = new nr(a);
             //cout << a << ')' << endl;
             break;
@@ -104,10 +104,10 @@ operation *buildExpression(string expression){
 
         if(prevOp!=NULL && (prevOp->sign == '*' || prevOp->sign == '/') && (sign == '-' || sign == '+')){
                         
-                //criar nr p/fechar          
+                //close expression of * or /          
                 prevOp->right = new nr(a);
     
-                //criar firstOp que engloba td em left
+                //create new parent node "firstOp" that has current tree on left node
                 currOp = new op();
                 currOp->left = firstOp;
                 currOp->sign = sign;
@@ -118,6 +118,7 @@ operation *buildExpression(string expression){
             //cout << a << sign << ' ';
         } else { //(sign == '-' || sign == '+' || sign == '/' || sign == '*')
     
+            //by default rightmost operands are the closest to the leaves of the tree
             currOp = new op();
             currOp->left = new nr(a);
             currOp->sign = sign;
@@ -126,7 +127,7 @@ operation *buildExpression(string expression){
                  prevOp->right=currOp;
             }
         }
-        //primeira iteracao
+        //first iteration
         if(prevOp==NULL){
               firstOp=currOp;        
         }        
